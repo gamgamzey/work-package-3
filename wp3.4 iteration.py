@@ -1,7 +1,7 @@
 import math
 import sys
 
-# ----------------------------------------------------------------------------------------------
+
 # constants and unit conversions
 KG2LB = 2.20462262
 M2FT = 3.280839895
@@ -18,9 +18,9 @@ T0 = 288.15
 P0 = 101325.0
 FTMIN2MS = 0.3048 / 60.0
 
-# ----------------------------------------------------------------------------------------------
+
 # INPUTS.  value / unit / source.   None = missing
-# ----------------------------------------------------------------------------------------------
+
 INPUTS = {
     # ---- top level / WP1 ----
     "mtom_0":        (8660.965,  "kg",    "WP1 final MTOM (start of the iteration)"),
@@ -158,7 +158,7 @@ WP1_REF = {
 }
 
 
-# ----------------------------------------------------------------------------------------------
+
 # atmosphere and thrust lapse
 def isa(h, dT=0.0):
     if h <= 11000.0:
@@ -187,7 +187,7 @@ def lapse(M, T_amb, p_amb, theta_break):
     return delta * (1.0 - 2.1 * (theta - theta_break) / theta)
 
 
-# ----------------------------------------------------------------------------------------------
+
 # MATCHING DIAGRAM (WP1 section 4.1.2).  p = dict with the diagram inputs (see md_params)
 def md_params(cfg, **over):
     p = dict(
@@ -309,7 +309,7 @@ def validate_matching(cfg):
     return worst
 
 
-# ----------------------------------------------------------------------------------------------
+
 # CLASS I: Breguet fuel fraction
 def fuel_fraction(cfg, ws=None, mtom=None):
     if cfg["ld_mode"] == "polar":
@@ -325,7 +325,7 @@ def fuel_fraction(cfg, ws=None, mtom=None):
     return 1.0 - math.exp(-x), ld
 
 
-# ----------------------------------------------------------------------------------------------
+
 # GEOMETRY that follows MTOM and W/S
 def geometry(cfg, mtom, ws):
     S = mtom * G / ws
@@ -345,7 +345,7 @@ def geometry(cfg, mtom, ws):
                 cbar=S / b, Sht=Sht, Svt=Svt, l_tail=l_tail)
 
 
-# ----------------------------------------------------------------------------------------------
+
 # CLASS II DRAG (report WP3.3 section 4.1):  CD0 = 1/S * sum(Cf*FF*IF*Swet) + CDmisc
 def class2_drag(cfg, geo):
     k = cfg["Swet_factor"]
@@ -373,14 +373,14 @@ def with_drag(cfg, geo):
     return c, dict(cd0=cd0, area=area, swet=swet)
 
 
-# ----------------------------------------------------------------------------------------------
+
 # LOAD FACTOR: fixed (no V-n diagram)
 def compute_nz(cfg, mtom=None, geo=None, oem_for_zfw=None):
     n_max = cfg["n_limit"]
     return dict(n_max=n_max, Nz=cfg["n_safety"] * n_max)
 
 
-# ----------------------------------------------------------------------------------------------
+
 # RAYMER GA equations 15.46 - 15.59 (lb, ft, ft^2, in, US gal, psf, psi) -> kg
 def need(*vals):
     return all(v is not None for v in vals)
@@ -513,7 +513,7 @@ def raymer(cfg, mtom, geo, nz, fuel_mass):
     return {k: (None if v is None else v * cfg["fudge"] / KG2LB) for k, v in c.items()}
 
 
-# ----------------------------------------------------------------------------------------------
+
 # WING FUEL VOLUME CHECK (WP2 section 5.2.2, Torenbeek)
 def wing_fuel_check(cfg, geo, fuel_mass):
     lam = cfg["taper"]
@@ -542,7 +542,7 @@ def pressurised_volume(cfg):
     return area * (cfg["l_cabin"] + cfg["l_cargo"] + 0.5 * cfg["l_nose_cone"])
 
 
-# ----------------------------------------------------------------------------------------------
+
 def build_cfg(strict=False, override=None):
     cfg = {k: v[0] for k, v in INPUTS.items()}
     used = []

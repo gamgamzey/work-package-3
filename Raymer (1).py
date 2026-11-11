@@ -1,7 +1,7 @@
 import math
 import sys
 
-# ----------------------------------------------------------------------------------------------
+ 
 # unit conversions
 KG2LB = 2.20462262
 M2FT = 3.280839895
@@ -15,9 +15,9 @@ RHO0 = 1.225
 A0 = 340.294
 P0 = 101325.0
 
-# ----------------------------------------------------------------------------------------------
+# 
 # INPUTS.  value / unit / source-or-status.   None = PLACEHOLDER (fill in, or use --demo)
-# ----------------------------------------------------------------------------------------------
+# 
 INPUTS = {
     # ---- top level / previous work packages (known) ----
     "mtom_0":        (8660.965,  "kg",   "WP1 final MTOM (starting guess for the iteration)"),
@@ -99,7 +99,7 @@ def get(cfg, key):
     return cfg[key]
 
 
-# ----------------------------------------------------------------------------------------------
+
 # atmosphere
 def isa(h):
     if h <= 11000.0:
@@ -117,7 +117,7 @@ def q_cruise(cfg):
     return 0.5 * 1.4 * p * cfg["M_cr"] ** 2  # Pa
 
 
-# ----------------------------------------------------------------------------------------------
+
 # geometry that follows MTOM (S from fixed W/S, span from fixed AR)
 def geometry(cfg, mtom):
     S = mtom * G / cfg["ws"]
@@ -133,14 +133,14 @@ def geometry(cfg, mtom):
     return g
 
 
-# ----------------------------------------------------------------------------------------------
+
 # load factor: fixed, no V-n diagram
 def compute_nz(cfg, mtom, geo, oem_for_zfw=None):
     n_max = cfg["n_limit"]
     return dict(n_max=n_max, Nz=cfg["n_safety"] * n_max)
 
 
-# ----------------------------------------------------------------------------------------------
+ 
 # Raymer GA equations 15.46 - 15.59 (lb, ft, ft^2, in, US gal, psf, psi) -> lb
 def need(*vals):
     return all(v is not None for v in vals)
@@ -275,7 +275,6 @@ def raymer(cfg, mtom, geo, nz):
     return {k: (None if v is None else v * cfg["fudge"] / KG2LB) for k, v in c.items()}
 
 
-# ----------------------------------------------------------------------------------------------
 def build_cfg(demo, override=None):
     cfg = {k: v[0] for k, v in INPUTS.items()}
     if override:
@@ -300,8 +299,7 @@ def missing_inputs(cfg):
 def fmt(x, w=9, d=1):
     return " " * (w - 7) + "missing" if x is None else f"{x:{w}.{d}f}"
 
-
-# ----------------------------------------------------------------------------------------------
+ 
 # INPUT TABLE of the report (Table: Inputs of the Class II weight estimation), evaluated at the START of the iteration
 # (MTOM = mtom_0, Class I geometry). Printed so that it can be compared line by line with the LaTeX table.
 def input_table(cfg):
